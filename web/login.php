@@ -39,13 +39,38 @@
  if (isset($_POST['password'])) $password = $_POST['password'];
   else $password = "";
 
- if ($name=="" || $password=="") {
+ $login_ok = false;
+
+if (isset($config->auth_mode) && $config->auth_mode === "casdoor") {
+	if (empty($config->casdoor_endpoint) || empty($config->casdoor_client_id)
+		|| empty($config->casdoor_redirect_uri) || empty($config->casdoor_organization)
+		|| empty($config->casdoor_application)) {
+		header("Location:index.php?err=1");
+		exit();
+	}
+
+	$state = bin2hex(random_bytes(16));
+	$_SESSION['casdoor_oauth_state'] = $state;
+
+	$authorize_query = http_build_query(array(
+		'client_id' => $config->casdoor_client_id,
+		'response_type' => 'code',
+		'redirect_uri' => $config->casdoor_redirect_uri,
+		'scope' => isset($config->casdoor_scope) ? $config->casdoor_scope : 'openid profile email',
+		'state' => $state,
+	));
+	$authorize_url = rtrim($config->casdoor_endpoint, '/').'/login/oauth/authorize?'.$authorize_query;
+	header('Location: '.$authorize_url);
+	exit();
+}
+
+
+if ($name=="" || $password=="") {
   				      $log = "[NOK] [".date("d-m-Y")." ".date("H:i:s")."] '$name' / '$password' from '".$_SERVER['REMOTE_ADDR']."'\n";
                                       header("Location:index.php?err=1");
                                       exit();
                                      }
 
-$login_ok = false;
 
 if ($config->admin_passwd_mode==0) {
   $stmt = $link->prepare("SELECT * FROM ocp_admin_privileges WHERE username = ? and password = ?");

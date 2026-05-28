@@ -21,6 +21,8 @@
  */
  
  require("../config/local.inc.php");
+ require("../config/globals.php");
+ global $config;
 ?>
 
 <html>
@@ -33,7 +35,11 @@
 <body>
 <center>
 <img src="images/logo.jpg"><br>
+<?php if (isset($config->auth_mode) && $config->auth_mode === "casdoor") { ?>
 <form action="login.php" method="post">
+<?php } else { ?>
+<form action="login.php" method="post">
+<?php } ?>
 <br><br>
 <table cellspacing="0" cellpadding="0" border="0" bgcolor="white">
   <tr>
@@ -53,6 +59,11 @@
       <tr>
        <td colspan="3"><hr></td>
       </tr>
+      <?php if (isset($config->auth_mode) && $config->auth_mode === "casdoor") { ?>
+      <tr>
+       <td colspan="3" align="center"><b class="loginLabel">Single Sign-On (Casdoor)</b></td>
+      </tr>
+      <?php } else { ?>
       <tr>
        <td width="40" align="right" valign="middle"><img height="10" src="images/arrow.gif" width="5" border="0">&nbsp;</td>
        <td width="90" align="right"><b class="loginLabel"><?php echo($login_user) ?>&nbsp;</b></td>
@@ -63,6 +74,7 @@
        <td width="90" align="right"><b class="loginLabel"><?php echo($login_pass) ?>&nbsp;</b></td>
        <td><input type="password" name="password" class="loginInput" autocomplete="off"></td>
       </tr>
+      <?php } ?>
       <tr>
        <td colspan="3"><hr></td>
       </tr>
