@@ -38,4 +38,17 @@ $config->twoFactorDomain = "OpenSIPS CP"; // Can be set to null for automatic fe
 // $config->admin_passwd_mode to 0 or chyphered mode, by setting it to 1
 $config->admin_passwd_mode=1;
 
+// Authentication backend: "local" (default) or "casdoor"
+$config->auth_mode = "local";
+
+// Casdoor (OIDC) settings used when $config->auth_mode == "casdoor"
+$config->casdoor_endpoint = null; // ex: https://door.example.com
+$config->casdoor_client_id = null;
+$config->casdoor_client_secret = null;
+$config->casdoor_organization = null;
+$config->casdoor_application = null;
+$config->casdoor_redirect_uri = null; // ex: https://cp.example.com/casdoor_callback.php
+$config->casdoor_scope = "openid profile email";
+$config->casdoor_username_claim = "preferred_username";
+
 ?>
