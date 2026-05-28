@@ -49,6 +49,6 @@ $config->casdoor_organization = null;
 $config->casdoor_application = null;
 $config->casdoor_redirect_uri = null; // ex: https://cp.example.com/casdoor_callback.php
 $config->casdoor_scope = "openid profile email";
-$config->casdoor_username_claim = "preferred_username";
+$config->casdoor_username_claim = "Name"; // Casdoor commonly returns "Name" as the account login
 
 ?>

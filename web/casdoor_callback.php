@@ -45,7 +45,7 @@ if (!is_array($token_data) || !isset($token_data['access_token'])) {
 	exit();
 }
 
-$claim = isset($config->casdoor_username_claim) ? $config->casdoor_username_claim : 'preferred_username';
+$claim = isset($config->casdoor_username_claim) ? $config->casdoor_username_claim : 'Name';
 $info_url = rtrim($config->casdoor_endpoint, '/').'/api/get-account?owner='.
 	urlencode($config->casdoor_organization).'&name='.urlencode($config->casdoor_application);
 $info_ctx = stream_context_create(array('http' => array(
@@ -59,11 +59,19 @@ if ($info_response === false) {
 	exit();
 }
 $user_data = json_decode($info_response, true);
-if (!is_array($user_data) || !isset($user_data[$claim])) {
+if (!is_array($user_data)) {
 	header("Location:index.php?err=1");
 	exit();
 }
-$name = $user_data[$claim];
+
+if (isset($user_data[$claim])) {
+	$name = $user_data[$claim];
+} else if (isset($user_data['data']) && is_array($user_data['data']) && isset($user_data['data'][$claim])) {
+	$name = $user_data['data'][$claim];
+} else {
+	header("Location:index.php?err=1");
+	exit();
+}
 
 $stmt = $link->prepare("SELECT * FROM ocp_admin_privileges WHERE username = ?");
 if (!$stmt->execute(array($name))) {
